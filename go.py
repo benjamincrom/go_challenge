@@ -10,27 +10,6 @@ def char_range(c1, c2):
     for c in xrange(ord(c1), ord(c2)):
         yield chr(c)
 
-def convert_location_to_tuple(location):
-    ''' Accepts string 'a2' or tuple ('a', 2) '''
-    if type(location) is str:
-        letter = location[0].lower()
-        number = int(location[1:])
-        location = (letter, number)
-    elif type(location) is tuple:
-        letter = str(location[0]).lower()
-        number = int(location[1])
-        location = (letter, number)
-    else:
-        raise Exception('Not a valid location.')
-
-    return location
-
-def convert_location_to_index_tuple(location):
-    location_tuple = convert_location_to_tuple(location)
-    letter_index = ord(location_tuple[0]) - 97
-    num_index = location_tuple[1] - 1
-    return (letter_index, num_index)
-
 
 class Move:
     def __init__(self, move_str):
