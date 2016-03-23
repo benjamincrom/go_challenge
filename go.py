@@ -6,6 +6,10 @@ from collections import namedtuple
 
 FullMove = namedtuple('FullMove', 'black_move white_move')
 
+def char_range(c1, c2):
+    for c in xrange(ord(c1), ord(c2)):
+        yield chr(c)
+
 
 class Move:
     def __init__(self, move_str):
@@ -54,7 +58,16 @@ class Game:
         self.black_score = 0
 
     def get_dead_piece_locations(self):
-        return []
+        dead_piece_location_list = []
+        for c in char_range('a', '['):
+            for i in range(1, 20):
+                coordinate = (c, i)
+                liberties = [self.board[(chr(ord(c) + 1), i)],
+                             self.board[(chr(ord(c) - 1), i)],
+                             self.board[(c, i + 1)],
+                             self.board[(c, i - 1)]]
+
+                all(liberties)
 
     def remove_dead_pieces(self, dead_piece_locations):
         pass
