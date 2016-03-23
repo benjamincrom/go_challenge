@@ -13,12 +13,12 @@ def char_range(c1, c2):
 
 class Move:
     def __init__(self, move_str):
-        self.letter = move_str[0].lower()
-        self.number = int(move_str[1:])
-        self.location = (self.letter, self.number)
+        letter = move_str[0].lower()
+        number = int(move_str[1:])
+        self.location = (letter, number)
 
     def __repr__(self):
-        return "Move('{}{}')".format(self.letter, self.number)
+        return "Move('{}{}')".format(self.location[0], self.location[1])
 
 
 class Board:
@@ -28,7 +28,7 @@ class Board:
         self.black_to_move = True
         self.black_half_move = None
         self.all_locations = [
-            (c, i) for c in char_range('a','t') for i in range(1, 20)
+            (c, i) for c in char_range('a', 't') for i in range(1, 20)
         ]
 
     def __getitem__(self, location):
