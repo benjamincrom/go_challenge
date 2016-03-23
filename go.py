@@ -9,30 +9,30 @@ FullMove = namedtuple('FullMove', 'black_move white_move')
 
 class Move:
     def __init__(self, move_str):
-        self.letter = move_str[0].upper()
+        self.letter = move_str[0].lower()
         self.number = int(move_str[1:])
         self.location = (self.letter, self.number)
 
     def __repr__(self):
-        return '{}'.format(self.location)
+        return "Move('{}{}')".format(self.letter, self.number)
 
 
 class Board:
     def __init__(self):
-        self.board_array = [[0 for _ in range(13)] for _ in range(13)]
+        self.board_array = [[0 for _ in range(19)] for _ in range(19)]
         self.full_move_list = []
         self.black_to_move = True
         self.black_half_move = None
 
     def __getitem__(self, location):
-        letter = location[0].upper()
-        letter_index = ord(letter) - 65
+        letter = location[0].lower()
+        letter_index = ord(letter) - 97
         num_index = location[1] - 1
         return self.board_array[letter_index][num_index]
 
     def __setitem__(self, location, value):
-        letter = location[0].upper()
-        letter_index = ord(letter) - 65
+        letter = location[0].lower()
+        letter_index = ord(letter) - 97
         num_index = location[1] - 1
         self.board_array[letter_index][num_index] = value
 
@@ -48,15 +48,27 @@ class Board:
 
 class Game:
     def __init__(self):
-        self.move_list = []
         self.board = Board()
+        self.move_list = []
+        self.white_score = 0
+        self.black_score = 0
+
+    def get_dead_piece_locations(self):
+        return []
+
+    def remove_dead_pieces(self, dead_piece_locations):
+        pass
 
     def move(self, player_move):
+        if self.board[player_move.location]:
+            raise Exception('Illegal move')
+
         if self.board.black_to_move:
+            self.board[player_move.location] = -1
             self.board.black_half_move = player_move
             self.board.black_to_move = False
-            self.board[player_move.location] = -1
         else:
+            self.board[player_move.location] = 1
             self.move_list.append(
                 FullMove(
                     black_move=self.board.black_half_move,
@@ -65,4 +77,7 @@ class Game:
             )
             self.board.black_half_move = None
             self.board.black_to_move = True
-            self.board[player_move.location] = 1
+
+        dead_piece_locations = self.get_dead_piece_locations()
+        if player_move.location in dead_piece_locations:
+            raise Exception('Illegal Move')
