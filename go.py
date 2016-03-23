@@ -133,6 +133,11 @@ class Game:
 
     def remove_dead_pieces(self, dead_piece_locations):
         for location in dead_piece_locations:
+            if self.board[location] == -1:
+                self.white_score += 1
+            elif self.board[location] == 1:
+                self.black_score += 1
+
             self.board[location] = 0
 
     def move(self, player_move_str):
