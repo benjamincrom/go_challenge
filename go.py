@@ -1,7 +1,6 @@
 '''
 go.py --
 '''
-from collections import namedtuple
 from copy import deepcopy
 
 def char_range(c1, c2):
@@ -33,13 +32,13 @@ class Board:
         letter = location[0].lower()
         letter_index = ord(letter) - 97
         num_index = location[1] - 1
-        return self.board_array[letter_index][num_index]
+        return self.board_array[num_index][letter_index]
 
     def __setitem__(self, location, value):
         letter = location[0].lower()
         letter_index = ord(letter) - 97
         num_index = location[1] - 1
-        self.board_array[letter_index][num_index] = value
+        self.board_array[num_index][letter_index] = value
 
     def __repr__(self):
         return_str = '   a b c d e f g h i j k l m n o p q r s\n'
@@ -47,16 +46,20 @@ class Board:
             return_str += '{0: <3}'.format(i+1)
             for col in row:
                 if col == 1:
-                    value = 'X'
-                elif col == -1:
                     value = 'O'
+                elif col == -1:
+                    value = 'X'
                 else:
                     value = '_'
                 return_str += '{0: <1} '.format(value)
             return_str += '\n'
 
-        return_str += '\nWhite: {}\nBlack: {}\n'.format(self.white_score,
-                                                        self.black_score)
+        return_str += '\nPlayer 1 (X): {}\nPlayer 2 (O): {}\n\nPlayer {}\'s Move (e.g. a1, b3, d2): '.format(
+            self.white_score,
+            self.black_score,
+            2 - int(self.black_to_move)
+        )
+
         return return_str
 
 
