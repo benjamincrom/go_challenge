@@ -147,13 +147,13 @@ class Game:
 
         if player_move.location in self.get_dead_piece_locations():
             self.board.black_to_move = not self.board.black_to_move
-            self.board[player_move.location] = 0
+            self.board.board_array = deepcopy(self.board_list[-1])
             return 'Illegal Move.  Piece is committing suicide. Try again: '
             # raise Exception('Illegal Move.  Piece is committing suicide.')
 
         if self.board.board_array in self.board_list:
             self.board.black_to_move = not self.board.black_to_move
-            self.board[player_move.location] = 0
+            self.board.board_array = deepcopy(self.board_list[-1])
             return 'Illegal Move. This position has already occurred. Try again: '
             # raise Exception('Illegal Move. This position has already occurred.')
 
