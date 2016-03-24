@@ -58,8 +58,8 @@ class Board:
             return_str += '\n'
 
         return_str += '\nPlayer 1 (X): {}\nPlayer 2 (O): {}\n\nPlayer {}\'s Move (e.g. a1, b3, d2): '.format(
-            self.white_score,
             self.black_score,
+            self.white_score,
             2 - int(self.black_to_move)
         )
 
