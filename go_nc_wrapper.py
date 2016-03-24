@@ -22,7 +22,7 @@ def go_handler(client):
         if not req:
             break
         result = game.move(str(req))
-        resp = str(result).encode('ascii')
+        resp = b'\n\n' + str(result).encode('ascii')
         client.send(resp)
 
 go_server(('', 25000))
