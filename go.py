@@ -10,7 +10,7 @@ def char_range(c1, c2):
 
 class Move:
     def __init__(self, move_str):
-        letter = move_str[0].lower()
+        letter = str(move_str[0]).lower()
         number = int(move_str[1:])
         self.location = (letter, number)
 
@@ -132,7 +132,18 @@ class Game:
             self.board[location] = 0
 
     def move(self, player_move_str):
+        player_move_str = player_move_str.strip()
+        if len(player_move_str) > 3 or len(player_move_str) < 2:
+            return 'Invalid move entry. Try typing a coordinate on the board like b4: '
+
         player_move = Move(player_move_str)
+        if ord(player_move.location[0]) < ord('a') or ord(player_move.location[0]) > ord('s'):
+            return 'Invalid move entry. Letter must be between a and s.  Try again: '
+
+        if player_move.location[1] < 1 or player_move.location[1] > 19:
+            return 'Invalid move entry. Number must be between 1 and 19. Try again: '
+
+
         if self.board[player_move.location]:
             return 'Illegal move.  Piece is already at this location. Try again: '
             # raise Exception('Illegal move.  Piece is already at this location.')
