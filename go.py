@@ -69,8 +69,16 @@ class Game:
 
     def is_piece_alive(self, piece_location):
         self.visited_pieces.append(piece_location)
-        piece_value = self.board[piece_location]
-        opponent_piece_value = -1 * piece_value
+
+        if self.board.black_to_move:
+            player_piece_value = -1
+            opponent_piece_value = 1
+        else:
+            player_piece_value = 1
+            opponent_piece_value = -1
+
+        if self.board[piece_location] == player_piece_value:
+            return True
 
         (letter, number) = piece_location
         neighbor_location_list = [(chr(ord(letter) + 1), number),
@@ -88,9 +96,9 @@ class Game:
         for neighbor_location in neighbor_location_list:
             if self.board[neighbor_location] == 0:
                 return True
-            elif self.board[neighbor_location] == opponent_piece_value:
+            elif self.board[neighbor_location] == player_piece_value:
                 continue
-            elif self.board[neighbor_location] == piece_value:
+            elif self.board[neighbor_location] == opponent_piece_value:
                 if (neighbor_location not in self.visited_pieces and
                         self.is_piece_alive(neighbor_location)):
                     return True
@@ -99,8 +107,8 @@ class Game:
 
         return False
 
-    def remove_dead_pieces(self, dead_piece_locations):
-        for location in dead_piece_locations:
+    def remove_dead_pieces(self):
+        for location in self.get_dead_piece_locations():
             if self.board[location] == -1:
                 self.white_score += 1
             elif self.board[location] == 1:
@@ -118,12 +126,11 @@ class Game:
         else:
             self.board[player_move.location] = 1
 
-        dead_piece_locations = self.get_dead_piece_locations()
+        self.remove_dead_pieces()
         self.board.black_to_move = not self.board.black_to_move
-        if player_move.location in dead_piece_locations:
-            raise Exception('Illegal Move.  Piece is committing suicide.')
 
-        self.remove_dead_pieces(dead_piece_locations)
+        if player_move.location in self.get_dead_piece_locations():
+            raise Exception('Illegal Move.  Piece is committing suicide.')
 
         if self.board.board_array in self.board_list:
             raise Exception('Illegal Move. This position has already occurred.')
