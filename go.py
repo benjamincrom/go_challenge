@@ -26,6 +26,8 @@ class Board:
         self.all_locations = [
             (c, i) for c in char_range('a', 't') for i in range(1, 20)
         ]
+        self.white_score = 0
+        self.black_score = 0
 
     def __getitem__(self, location):
         letter = location[0].lower()
@@ -40,12 +42,21 @@ class Board:
         self.board_array[letter_index][num_index] = value
 
     def __repr__(self):
-        return_str = ''
-        for row in self.board_array:
+        return_str = '   a b c d e f g h i j k l m n o p q r s\n'
+        for i, row in enumerate(self.board_array):
+            return_str += '{0: <3}'.format(i+1)
             for col in row:
-                return_str += '{0: <3} '.format(col)
+                if col == 1:
+                    value = 'X'
+                elif col == -1:
+                    value = 'O'
+                else:
+                    value = '_'
+                return_str += '{0: <1} '.format(value)
             return_str += '\n'
 
+        return_str += '\nWhite: {}\nBlack: {}\n'.format(self.white_score,
+                                                        self.black_score)
         return return_str
 
 
@@ -54,8 +65,6 @@ class Game:
         self.board = Board()
         self.move_list = []
         self.board_list = []
-        self.white_score = 0
-        self.black_score = 0
 
     def get_dead_piece_locations(self):
         dead_piece_locations = []
@@ -110,9 +119,9 @@ class Game:
     def remove_dead_pieces(self):
         for location in self.get_dead_piece_locations():
             if self.board[location] == -1:
-                self.white_score += 1
+                self.board.white_score += 1
             elif self.board[location] == 1:
-                self.black_score += 1
+                self.board.black_score += 1
 
             self.board[location] = 0
 
