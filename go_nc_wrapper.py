@@ -1,5 +1,6 @@
 import go
 import socket
+from threading import Thread
 
 def go_server(address):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -9,7 +10,7 @@ def go_server(address):
     while True:
         client, addr = sock.accept()
         print("Connection", addr)
-        go_handler(client)
+        result = Thread(target=go_handler, args=(client,)).start()
 
 def go_handler(client):
     game = go.Game()
@@ -20,9 +21,7 @@ def go_handler(client):
         req = client.recv(100)
         if not req:
             break
-        input_str = str(req)
-        game.move(input_str)
-        result = game.board
+        result = game.move(str(req))
         resp = str(result).encode('ascii')
         client.send(resp)
 

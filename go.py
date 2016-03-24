@@ -41,6 +41,9 @@ class Board:
         self.board_array[num_index][letter_index] = value
 
     def __repr__(self):
+        return self.print_board()
+
+    def print_board(self):
         return_str = '   a b c d e f g h i j k l m n o p q r s\n'
         for i, row in enumerate(self.board_array):
             return_str += '{0: <3}'.format(i+1)
@@ -131,7 +134,8 @@ class Game:
     def move(self, player_move_str):
         player_move = Move(player_move_str)
         if self.board[player_move.location]:
-            raise Exception('Illegal move.  Piece is already at this location.')
+            return 'Illegal move.  Piece is already at this location. Try again: '
+            # raise Exception('Illegal move.  Piece is already at this location.')
 
         if self.board.black_to_move:
             self.board[player_move.location] = -1
@@ -142,11 +146,18 @@ class Game:
         self.board.black_to_move = not self.board.black_to_move
 
         if player_move.location in self.get_dead_piece_locations():
-            raise Exception('Illegal Move.  Piece is committing suicide.')
+            self.board.black_to_move = not self.board.black_to_move
+            self.board[player_move.location] = 0
+            return 'Illegal Move.  Piece is committing suicide. Try again: '
+            # raise Exception('Illegal Move.  Piece is committing suicide.')
 
         if self.board.board_array in self.board_list:
-            raise Exception('Illegal Move. This position has already occurred.')
+            self.board.black_to_move = not self.board.black_to_move
+            self.board[player_move.location] = 0
+            return 'Illegal Move. This position has already occurred. Try again: '
+            # raise Exception('Illegal Move. This position has already occurred.')
 
         self.move_list.append(player_move)
         self.board_list.append(deepcopy(self.board.board_array))
+        return self.board.print_board()
 
