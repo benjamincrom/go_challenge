@@ -1,10 +1,8 @@
 '''
 go.py --
 '''
-
 from collections import namedtuple
-
-FullMove = namedtuple('FullMove', 'black_move white_move')
+from copy import deepcopy
 
 def char_range(c1, c2):
     for c in xrange(ord(c1), ord(c2)):
@@ -24,9 +22,7 @@ class Move:
 class Board:
     def __init__(self):
         self.board_array = [[0 for _ in range(19)] for _ in range(19)]
-        self.full_move_list = []
         self.black_to_move = True
-        self.black_half_move = None
         self.all_locations = [
             (c, i) for c in char_range('a', 't') for i in range(1, 20)
         ]
@@ -57,6 +53,7 @@ class Game:
     def __init__(self):
         self.board = Board()
         self.move_list = []
+        self.board_list = []
         self.white_score = 0
         self.black_score = 0
 
@@ -72,16 +69,8 @@ class Game:
 
     def is_piece_alive(self, piece_location):
         self.visited_pieces.append(piece_location)
-
-        if self.board.black_to_move:
-            player_piece_value = -1
-            opponent_piece_value = 1
-        else:
-            player_piece_value = 1
-            opponent_piece_value = -1
-
-        if self.board[piece_location] == opponent_piece_value:
-            return True
+        piece_value = self.board[piece_location]
+        opponent_piece_value = -1 * piece_value
 
         (letter, number) = piece_location
         neighbor_location_list = [(chr(ord(letter) + 1), number),
@@ -101,7 +90,7 @@ class Game:
                 return True
             elif self.board[neighbor_location] == opponent_piece_value:
                 continue
-            elif self.board[neighbor_location] == player_piece_value:
+            elif self.board[neighbor_location] == piece_value:
                 if (neighbor_location not in self.visited_pieces and
                         self.is_piece_alive(neighbor_location)):
                     return True
@@ -126,21 +115,19 @@ class Game:
 
         if self.board.black_to_move:
             self.board[player_move.location] = -1
-            self.board.black_half_move = player_move
-            self.board.black_to_move = False
         else:
             self.board[player_move.location] = 1
-            self.move_list.append(
-                FullMove(
-                    black_move=self.board.black_half_move,
-                    white_move=player_move
-                )
-            )
-            self.board.black_half_move = None
-            self.board.black_to_move = True
 
         dead_piece_locations = self.get_dead_piece_locations()
+        self.board.black_to_move = not self.board.black_to_move
         if player_move.location in dead_piece_locations:
             raise Exception('Illegal Move.  Piece is committing suicide.')
 
         self.remove_dead_pieces(dead_piece_locations)
+
+        if self.board.board_array in self.board_list:
+            raise Exception('Illegal Move. This position has already occurred.')
+
+        self.move_list.append(player_move)
+        self.board_list.append(deepcopy(self.board.board_array))
+
